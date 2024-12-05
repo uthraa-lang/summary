@@ -1,0 +1,28 @@
+@app.route('/insight/<execution_id>',methods=['GET'])
+def get_insights_details(execution_id):
+    try:
+        cursor=mongo_obj.read_data_with_multiple_filter_non_sanitized(
+            'insights',
+            {"executionId":execution_id}
+ 
+        )
+        document=list(cursor)
+        if not document:
+            return jsonify(
+                {
+                    "status":"Success",
+                    "data":[],
+                    "message":"No document found "
+ 
+                }
+            ),200
+        for doc in document:
+            if "_id" in doc:
+                doc["_id"]=str(doc["_id"])
+        return document
+    except Exception as e:
+     return jsonify({
+        "status": "error",
+        "message": str(e)
+    }), 500
+ 
